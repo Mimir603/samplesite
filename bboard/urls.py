@@ -1,9 +1,11 @@
-from django.contrib import admin
 from django.urls import path
 
-from bboard.views import index
+from bboard.views import index, by_rubrick
+
+
+app_name = 'bboard'
 
 urlpatterns = [
-    path('bboard/', index),
-    path('admin/', admin.site.urls),
+    path('<int:rubrick_id>/', by_rubrick, name='by_rubrick'),
+    path('', index, name='index')
 ]
