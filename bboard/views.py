@@ -2,7 +2,10 @@ from django.shortcuts import render
 
 from django.http import HttpResponse
 from django.template import loader
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
 
+from bboard.forms import BbForm
 from bboard.models import Bb, Rubrick
 
 
@@ -32,3 +35,13 @@ def by_rubrick(request, rubrick_id):
 
     return render(request, 'bboard/by_rubrick.html', context)
 
+
+class BbCreateView(CreateView):
+    template_name = 'bboard/create.html'
+    form_class = BbForm
+    success_url = reverse_lazy('bboard:index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubricks'] = Rubrick.objects.all()
+        return context

@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "layout/basic.html" %}
+
+
+
+{% block title %}Добавление объявления{% endblock %}
+
+{% block content %}
+    <h2>Добавление объявления</h2>
+
+    <div>
+        <a href="{% url 'bboard:by_rubrick' rubrick.pk %}">Главная</a>
+        {% for rubrick in rubricks %}
+            <a href="{% url 'bboard:by_rubrick' rubrick.pk %}">{{ rubrick.name }}</a>
+        {% endfor %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Добавить</button>
+    </form>
+{% end block %}
