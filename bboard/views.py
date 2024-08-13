@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from django.template import loader
 from django.urls import reverse_lazy, reverse
 from django.views.decorators.http import require_http_methods
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, ArchiveIndexView, DateDetailView, RedirectView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 
 from bboard.forms import BbForm
@@ -162,12 +162,6 @@ def add_and_save(request):
         return render(request, 'bboard/create.html', context)
 
 def detail(request, bb_id):
-    # try:
-    #     bb = Bb.objects.get(pk=bb_id)
-    # except Bb.DoesNotExist:
-    #   #  return  HttpResponseNotFound('Такое объявление не существует!')
-    #     return Http404('Такого обновления не существует!')
-
     bb = get_object_or_404(Bb, pk=bb_id)
 
     rubrics = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
@@ -193,3 +187,30 @@ class BbDeleteView(DeleteView):
         context = super().get_context_data(**kwargs)
         context['rubrics'] = Rubric.objects.all()
         return context
+
+class BbIndexView(ArchiveIndexView):
+    model = Bb
+    data_field = 'published'
+    date_list_period = 'year'
+    template_name = 'bboard/index.html'
+    context_object_name = 'bbs'
+    allow_empty = True
+    # allow_future = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubrics'] = Rubric.objects.annotate(cnt=Count('bb').filter(cnt__gt=0))
+        return context
+
+class BbDetailView(DateDetailView):
+    model = Bb
+    date_field = 'published'
+    month_format = '%m'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubrics'] = Rubric.objects.annotate(cnt=Count('bb').filter(cnt__gt=0))
+        return context
+
+class BbRedirectView(RedirectView):
+    url = 'detail'
