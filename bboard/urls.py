@@ -9,11 +9,11 @@ app_name = 'bboard'
 
 urlpatterns = [
     path('add/', BbCreateView.as_view(), name='add'),
-    path('update/<int:pk>/', BbEditView.as_view(), name='update'),
-    path('delete/<int:pk>/', BbDeleteView.as_view(), name='delete'),
-    path('<int:rubric_id>/', BbByRubricView.as_view(), name='by_rubric'),
+    path('update/<init:pk>/', BbEditView.as_view(), name='update'),
+    path('delete/<init:pk>/', BbDeleteView.as_view(), name='delete'),
+    path('<init:rubric_id>/', BbByRubricView.as_view(), name='by_rubric'),
     # path('detail/<init:pk>/', BbDetailView.as_view(), name='detail'),
-    path('detail/<int:year>/<int:month>/<int:day>/<int:pk>/', BbDetailView.as_view(), name='detail'),
+    path('detail/<init:year>/<init:month>/<init:day>/<init:pk>/', BbDetailView.as_view(), name='detail'),
 ]
 
 
