@@ -1,4 +1,5 @@
 from aiohttp.web_fileresponse import FileResponse
+from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import HttpResponse, Http404, StreamingHttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
@@ -23,6 +24,14 @@ from bboard.models import Bb, Rubric
 def index(request):
     bbs = Bb.objects.order_by('-published')
     rubrics = Rubric.objects.all()
+
+    paginator = Paginator(bbs, 2)
+
+    if 'page' in request.GET:
+        page_num = request.GET['page']
+    else:
+        page_num = 1
+
     context = {'bbs': bbs, 'rubrics': rubrics}
 
     return render(request, 'bboard/index.html', context)

@@ -14,6 +14,7 @@ urlpatterns = [
     path('<init:rubric_id>/', BbByRubricView.as_view(), name='by_rubric'),
     # path('detail/<init:pk>/', BbDetailView.as_view(), name='detail'),
     path('detail/<init:year>/<init:month>/<init:day>/<init:pk>/', BbDetailView.as_view(), name='detail'),
+    path('detail/<init:year>/<init:month>/<init:day>/<init:pk>/', BbRedirect.as_view(), name='detail'),
 ]
 
 
