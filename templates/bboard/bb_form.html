@@ -8,7 +8,6 @@
 <h2>Изменение объявления</h2>
 
     <form method="post">
-    {#<form action="{% url 'bboard:add_save' %}" method="post">#}
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Изменить</button>
