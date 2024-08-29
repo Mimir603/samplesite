@@ -1,12 +1,21 @@
 from django.contrib.auth.models import User
 from django.core import validators
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm, modelform_factory, DecimalField
+from django.forms import ModelForm, modelform_factory, DecimalField, modelformset_factory, BaseModelFormSet
 from django.forms.widgets import Select
 from django import forms
 
 from bboard.models import Bb, Rubric
 
+class RubricBaseFormSet(BaseModelFormSet):
+    def clean(self):
+        super().clean()
+        names = [form.cleaned_data['name'] for form in self.forms if 'name' in form.cleaned_data]
+
+        if ('Недвижимость' not in names) \
+            or ('Транспорт' not in names) \
+            or ('Сантехника' not in names):
+            raise ValidationError('Добавьте рубрики недвижимость, транспорт, сантехника или мебель')
 
 # BbForm = modelform_factory(Bb,
 #                            fields=('title', 'content', 'price', 'rubric'),
@@ -85,3 +94,22 @@ class BbForm(ModelForm):
 #         model = User
 #         fields = ('username', 'email', 'password1', 'password2',
 #                   'first_name', 'last_name')
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(label='Имя', max_length=100)
+    email = forms.EmailField(label='Email')
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email:
+            raise ValidationError('Пожалуйста, введите корректный email адрес.')
+        return email
+
+RubricFormSet = modelformset_factory(
+        Rubric,
+        fields=('name',),
+        can_order=True,
+        can_delete=True,
+        extra=2,
+    )
