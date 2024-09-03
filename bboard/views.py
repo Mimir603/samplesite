@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.forms import modelformset_factory
@@ -13,14 +14,19 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
-from django.shortcuts import render
-from .forms import ContactForm, RubricFormSet
-from bboard.forms import BbForm
-from bboard.models import Bb, Rubric
 from django.forms.formsets import ORDERING_FIELD_NAME
+
+from bboard.forms import BbForm, RubricFormSet
+from bboard.models import Bb, Rubric
 
 
 def index(request):
+    # if request.user.has_perm('bboard.add_rubric'):
+    #     print('HAS_PERM')
+    # if request.user.has_perm(('bboard.add_rubric', 'bboard.add_bb')):
+    #     print('HAS_PERMs')
+    print(request.user.get_all_permissions())
+
     bbs = Bb.objects.order_by('-published')
     rubrics = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
 
@@ -206,20 +212,8 @@ class BbDeleteView(DeleteView):
         context['rubrics'] = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
         return context
 
-def form_view(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
-            success_message = f'Привет, {name}! Ваш email: {email}'
-            return render(request, 'form.html', {'form': form, 'success_message': success_message})
-        else:
-            return render(request, 'form.html', {'form': form, 'error_message': 'Пожалуйста, заполните все поля формы.'})
-    else:
-        form = ContactForm()
-    return render(request, 'form.html', {'form': form})
 
+@login_required(login_url='login')
 def rubrics(request):
     rubs = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
 
@@ -236,9 +230,11 @@ def rubrics(request):
                     rubric.order = form.cleaned_data[ORDERING_FIELD_NAME]
                     rubric.save()
 
-            for rubric in formset:
+            for rubric in formset.deleted_objects:
+                rubric.delete()
 
-        return redirect('bboard:index')
+            # formset.save()
+            return redirect('bboard:index')
     else:
         formset = RubricFormSet()
 

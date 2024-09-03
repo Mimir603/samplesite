@@ -136,3 +136,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ABSOLUTE_URL_OVERRIDES = {
 #     'bboard.rubric': lambda rec: f"/{rec.pk}/"
 # }
+
+#
+# LOGIN_URL = '/accounts/login/'
+# LOGIN_REDIRECT_URL = '/accounts/profile/'
+# LOGOUT_REDIRECT_URL = None
+#
+# PASSWORD_RESET_TIMEOUT = 60 * 60 * 24 * 3

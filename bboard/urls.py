@@ -1,16 +1,16 @@
+from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordChangeDoneView, LogoutView
 from django.urls import path, re_path
 
 from bboard.models import Bb
 from bboard.views import (index, by_rubric, BbCreateView, add_and_save, detail,
                           BbByRubricView, BbDetailView, BbAddView, BbEditView,
-                          BbDeleteView, BbIndexView, BbRedirectView, edit, rubrics)  # add, add_save
-
-
+                          BbDeleteView, BbIndexView, BbRedirectView, edit,
+                          rubrics)  # add, add_save
 
 app_name = 'bboard'
 
 urlpatterns = [
-    path('rubrics', rubrics, name='rubrics'),
+    path('rubrics/', rubrics, name='rubrics'),
 
     path('add/', BbCreateView.as_view(), name='add'),
 
@@ -26,7 +26,17 @@ urlpatterns = [
     path('detail/<int:year>/<int:month>/<int:day>/<int:pk>/',
          BbRedirectView.as_view(), name='old_detail'),
 
+    path('accounts/login/', LoginView.as_view(), name='login'),
+    path('accounts/logout/', LogoutView.as_view(), name='logout'),
+
+    path('accounts/password_change/',
+         PasswordChangeView.as_view(template_name='registration/change_password.html'),
+    name='password_change'),
+
+    path('accounts/password_change/done/',
+         PasswordChangeDoneView.as_view(template_name='registration/changed_password.html'),
+    name='password_change_done'),
+
     path('', index, name='index'),
     # path('', BbIndexView.as_view(), name='index'),
-
 ]
