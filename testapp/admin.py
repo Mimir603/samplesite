@@ -1,3 +1,10 @@
+import kit as kit
 from django.contrib import admin
 
-# Register your models here.
+from testapp.models import Spare, Machine, Kit
+
+admin.site.register(Spare)
+admin.site.register(Machine)
+admin.site.register(Kit)
+
+

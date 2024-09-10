@@ -16,8 +16,8 @@ class Machine(models.Model):
     spares = models.ManyToManyField(Spare, through='Kit',
                                     through_fields=('machine', 'spare'))
 
+
 class Kit(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
     spare = models.ForeignKey(Spare, on_delete=models.CASCADE)
     count = models.IntegerField()
-
