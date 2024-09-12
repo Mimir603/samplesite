@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.db.models import Count
 from django.forms import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, \
@@ -16,19 +17,16 @@ from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.forms.formsets import ORDERING_FIELD_NAME
 
+from bboard import models
 from bboard.forms import BbForm, RubricFormSet
 from bboard.models import Bb, Rubric
 
 
 def index(request):
-    # if request.user.has_perm('bboard.add_rubric'):
-    #     print('HAS_PERM')
-    # if request.user.has_perm(('bboard.add_rubric', 'bboard.add_bb')):
-    #     print('HAS_PERMs')
-    print(request.user.get_all_permissions())
-
     bbs = Bb.objects.order_by('-published')
-    rubrics = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
+    # rubrics = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
+    # rubrics = Rubric.bbs.all()
+    rubrics = Rubric.objects.all().order_by_bb_count()
 
     paginator = Paginator(bbs, 2)
 
@@ -106,7 +104,11 @@ class BbEditView(UpdateView):
         context['rubrics'] = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
         return context
 
+    def commit_handler(self):
+        print('Транзакиця усо')
 
+
+# @transaction.non_atomic_requests
 def edit(request, pk):
     bb = Bb.objects.get(pk=pk)
 
@@ -118,6 +120,18 @@ def edit(request, pk):
             return HttpResponseRedirect(
                 reverse('bboard:by_rubric',
                         kwargs={'rubric_id': bbf.cleaned_data['rubric'].pk}))
+        # bbf = BbForm(request.POST, instance=bb)
+        # sp = transaction.savepoint()
+        # if bbf.has_changed():
+        #     sp = transaction.savepoint()
+        #     try:
+        #         bbf.save()
+        #         transaction.savepoint_commit(sp)
+        #     except:
+        #         transaction.savepoint_rollback(sp)
+        #         transaction.commit()
+        #     transaction.on_commit(commit_handler)
+        #
         else:
             context = {'form': bbf}
             return render(request, 'bboard/bb_form.html', context)
