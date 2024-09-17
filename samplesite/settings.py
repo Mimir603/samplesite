@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 from tempfile import template
 
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 
     'bboard.apps.BboardConfig',
     'testapp',
+
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -137,13 +139,9 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ABSOLUTE_URL_OVERRIDES = {
-#     'bboard.rubric': lambda rec: f"/{rec.pk}/"
-# }
-
-#
-# LOGIN_URL = '/accounts/login/'
-# LOGIN_REDIRECT_URL = '/accounts/profile/'
-# LOGOUT_REDIRECT_URL = None
-#
-# PASSWORD_RESET_TIMEOUT = 60 * 60 * 24 * 3
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.word_challenge'
+CAPTCHA_WORDS_DICTIONARY = os.path.join(BASE_DIR, 'static', 'words.txt')
+CAPTCHA_FONT_SIZE = 26
+CAPTCHA_LETTER_ROTATION = (-35, 35)
+CAPTCHA_BACKGROUND_COLOR = '#001100'
+CAPTCHA_FOREGROUND_COLOR = '#ffffff'

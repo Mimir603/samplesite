@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-from django.db import transaction
+from django.db import transaction, models, transaction
 from django.db.models import Count
 from django.forms import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, \
@@ -18,8 +19,26 @@ from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteVi
 from django.forms.formsets import ORDERING_FIELD_NAME
 
 from bboard import models
-from bboard.forms import BbForm, RubricFormSet
+from bboard.forms import BbForm, RubricFormSet, SearchForm
 from bboard.models import Bb, Rubric
+
+# Транзакции тестил
+# class User(models.Model):
+#     name = models.CharField(max_length=100)
+#     age = models.IntegerField()
+#
+#
+# def execute_transation():
+#     try:
+#         with transaction.atomic():
+#             User.objects.create(name='Evgeniy', age=42)
+#
+#             raise ValidationError('Somthing went wrong!')
+#
+#     except ValidationError as e:
+#         print('Transaction rolled back due to an error:', e)
+#
+# execute_transation()
 
 
 def index(request):
@@ -254,3 +273,27 @@ def rubrics(request):
 
     context = {'formset': formset, 'rubrics': rubs}
     return render(request, 'bboard/rubrics.html', context)
+
+
+def search(request):
+    if request.method == "POST":
+        sf = SearchForm(request.POST)
+        if sf.is_valid():
+            keyword = sf.cleaned_data['keyword']
+            rubric_id = sf.cleaned_data['rubric'].pk
+            # bbs = Bb.objects.filter(title__icontains=keyword,
+            #                         rubric=rubric_id)
+            bbs = Bb.objects.filter(title__iregex=keyword,
+                                    rubric=rubric_id)
+
+            context = {"bbs": bbs}
+            return render(request, "bboard/search.html", context)
+    else:
+        sf = SearchForm()
+
+    context = {'form': sf}
+
+    return render(request, "bboard/search.html", context)
+
+
+
