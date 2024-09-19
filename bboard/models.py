@@ -32,16 +32,17 @@ class RubricQuerySet(models.QuerySet):
             cnt=models.Count('bb')
         ).order_by('-cnt')
 
+
 class RubricManager(models.Manager):
-    # def get_query_set(self):
+    # def get_queryset(self):
     #     return super().get_queryset().annotate(
     #         cnt=models.Count('bb')
     #     ).order_by('order', 'name')
-    #
+
     # def order_by_bb_count(self):
     #     return super().get_queryset().annotate(
     #         cnt=models.Count('bb')
-    #     ).order_by('order', 'name')
+    #     ).order_by('-cnt')
 
     def get_queryset(self):
         return RubricQuerySet(self.model, using=self._db)
@@ -56,6 +57,8 @@ class Rubric(models.Model):
     order = models.SmallIntegerField(default=0, db_index=True)
 
     # objects = RubricManager()
+    # objects = models.Manager()
+    # objects = RubricQuerySet.as_manager()
     objects = models.Manager.from_queryset(RubricQuerySet)()
     bbs = RubricManager()
 
@@ -75,20 +78,18 @@ class Rubric(models.Model):
     class Meta:
         verbose_name = 'Рубрика'
         verbose_name_plural = 'Рубрики'
-        ordering = ['order', 'name']
-
+        # ordering = ['order', 'name']
 
 
 class RevRubric(Rubric):
     class Meta:
         proxy = True
-        ordering = ['-name', '-order']
+        ordering = ['-order', '-name']
 
 
 class BbManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().order_by('price')
-
 
 
 class Bb(models.Model):
@@ -144,8 +145,7 @@ class Bb(models.Model):
     #                                 )
 
     objects = models.Manager()
-    by_rubric = BbManager()
-
+    by_price = BbManager()
 
     def title_and_price(self):
         if self.price:

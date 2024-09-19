@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.db import transaction, models, transaction
+from django.db import transaction
 from django.db.models import Count
 from django.forms import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, \
@@ -18,34 +18,17 @@ from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.forms.formsets import ORDERING_FIELD_NAME
 
-from bboard import models
 from bboard.forms import BbForm, RubricFormSet, SearchForm
 from bboard.models import Bb, Rubric
-
-# Транзакции тестил
-# class User(models.Model):
-#     name = models.CharField(max_length=100)
-#     age = models.IntegerField()
-#
-#
-# def execute_transation():
-#     try:
-#         with transaction.atomic():
-#             User.objects.create(name='Evgeniy', age=42)
-#
-#             raise ValidationError('Somthing went wrong!')
-#
-#     except ValidationError as e:
-#         print('Transaction rolled back due to an error:', e)
-#
-# execute_transation()
 
 
 def index(request):
     bbs = Bb.objects.order_by('-published')
     # rubrics = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
-    # rubrics = Rubric.bbs.all()
+    # rubrics = Rubric.objects.all()
+    # rubrics = Rubric.objects.order_by_bb_count()
     rubrics = Rubric.objects.all().order_by_bb_count()
+    # rubrics = Rubric.bbs.all()
 
     paginator = Paginator(bbs, 2)
 
@@ -92,7 +75,10 @@ class BbByRubricView(ListView):
     context_object_name = 'bbs'
 
     def get_queryset(self):
-        return Bb.objects.filter(rubric=self.kwargs['rubric_id'])
+        # return Bb.objects.filter(rubric=self.kwargs['rubric_id'])
+        rubric = Rubric.objects.get(pk=self.kwargs['rubric_id'])
+        # return rubric.bb_set.all()
+        return rubric.bb_set(manager='by_price').all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -101,7 +87,7 @@ class BbByRubricView(ListView):
         return context
 
 
-class BbCreateView(CreateView):
+class BbCreateView(LoginRequiredMixin, CreateView):
     template_name = 'bboard/create.html'
     form_class = BbForm
     # success_url = reverse_lazy('bboard:index')
@@ -123,11 +109,11 @@ class BbEditView(UpdateView):
         context['rubrics'] = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
         return context
 
-    def commit_handler(self):
-        print('Транзакиця усо')
-
+def commit_handler():
+    print('Транзакция закоммичена')
 
 # @transaction.non_atomic_requests
+# @transaction.atomic
 def edit(request, pk):
     bb = Bb.objects.get(pk=pk)
 
@@ -139,18 +125,6 @@ def edit(request, pk):
             return HttpResponseRedirect(
                 reverse('bboard:by_rubric',
                         kwargs={'rubric_id': bbf.cleaned_data['rubric'].pk}))
-        # bbf = BbForm(request.POST, instance=bb)
-        # sp = transaction.savepoint()
-        # if bbf.has_changed():
-        #     sp = transaction.savepoint()
-        #     try:
-        #         bbf.save()
-        #         transaction.savepoint_commit(sp)
-        #     except:
-        #         transaction.savepoint_rollback(sp)
-        #         transaction.commit()
-        #     transaction.on_commit(commit_handler)
-        #
         else:
             context = {'form': bbf}
             return render(request, 'bboard/bb_form.html', context)
@@ -276,7 +250,7 @@ def rubrics(request):
 
 
 def search(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         sf = SearchForm(request.POST)
         if sf.is_valid():
             keyword = sf.cleaned_data['keyword']
@@ -286,14 +260,13 @@ def search(request):
             bbs = Bb.objects.filter(title__iregex=keyword,
                                     rubric=rubric_id)
 
-            context = {"bbs": bbs}
-            return render(request, "bboard/search.html", context)
+            context = {'bbs': bbs, 'form': sf}
+            return render(request, 'bboard/search.html', context)
     else:
         sf = SearchForm()
 
     context = {'form': sf}
 
-    return render(request, "bboard/search.html", context)
-
+    return render(request, 'bboard/search.html', context)
 
 

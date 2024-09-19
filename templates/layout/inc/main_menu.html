@@ -1,11 +1,10 @@
 <nav>
     <a href="{% url 'bboard:index' %}">Главная</a>
 
-
-    {% if user.is_annonymous %}
+    {% if user.is_anonymous %}
         <a href="{% url 'login' %}">Войти</a>
     {% else %}
-         <a href="{% url 'logout' %}">Выйти</a>
+        <a href="{% url 'logout' %}">Выйти</a>
     {% endif %}
 
     <a href="{% url 'bboard:add' %}">Добавить</a>

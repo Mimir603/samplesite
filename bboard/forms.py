@@ -1,4 +1,3 @@
-from captcha.fields import CaptchaField
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 # from django.core import validators
@@ -6,6 +5,8 @@ from django.forms import (ModelForm, modelform_factory, DecimalField,
                           modelformset_factory, BaseModelFormSet)
 from django.forms.widgets import Select
 from django import forms
+
+from captcha.fields import CaptchaField
 
 from bboard.models import Bb, Rubric
 
@@ -32,8 +33,8 @@ from bboard.models import Bb, Rubric
 class BbForm(ModelForm):
     title = forms.CharField(
         label='Название товара',
-#         validators=[validators.RegexValidator(regex='^.{4,}$')], #
-#         error_messages={'invalid': 'Слишком короткое название товара'}, #
+#         validators=[validators.RegexValidator(regex='^.{4,}$')],
+#         error_messages={'invalid': 'Слишком короткое название товара'},
         strip=True)
     # content = forms.CharField(label='Описание',
     #                           widget=forms.widgets.Textarea())
@@ -51,6 +52,7 @@ class BbForm(ModelForm):
                            error_messages={'invalid': 'Неправильный текст'},
                            # generator='captcha.helpers.random_char_challenge',
                            # generator='captcha.helpers.math_challenge',
+                           # generator='captcha.helpers.word_challenge',
                            )
 
     def clean_title(self):
@@ -99,5 +101,5 @@ RubricFormSet = modelformset_factory(
 
 
 class SearchForm(forms.Form):
-    keyword = forms.CharField(max_length=25, label='Поиск')
-    rubric = forms.ModelChoiceField(queryset=Rubric.objects.all(), label="Рубрика")
+    keyword = forms.CharField(max_length=20, label='Искомое слово')
+    rubric = forms.ModelChoiceField(queryset=Rubric.objects.all(), label='Рубрика')
