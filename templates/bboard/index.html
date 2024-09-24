@@ -1,4 +1,5 @@
 {% extends "layout/basic.html" %}
+{% load bbcode_tags %}
 
 {% block content %}
     
@@ -17,8 +18,10 @@
             </h2>
         {% endif %}
 
-            <p>{{ bb.content }}</p>
-    
+{#            <p>{{ bb.content }}</p>#}
+{#            <p>{{ bb.content|bbcode|safe }}</p>#}
+{#            <p>{{ bb.content|bbcode|safe }}</p>#}
+
         {% ifchanged %}
             <p><a href="{% url 'bboard:by_rubric' bb.rubric.pk %}">
                 {{ bb.rubric.name }}</a></p>
@@ -30,7 +33,7 @@
     
     <div>
         {% if page.has_previous %}
-            <a href="?page={{ page.previous_page_number }}">&lt;</a>
+            <a href="?page={{ page.previous_page_number }}"><&lt;</a>
             &nbsp; | &nbsp;
         {% endif %}
     
