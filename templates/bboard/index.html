@@ -1,39 +1,43 @@
 {% extends "layout/basic.html" %}
 {% load bbcode_tags %}
+{% load django_bootstrap5 %}
 
 {% block content %}
     
 {#    {{ block.super }}#}
 
     {% for bb in bbs %}
-    <div class="{% cycle 'b1' 'b2' 'b3' %}">
-        {% if forloop.first %}
-            <h2 style="font-size: 36px;">
-                <a href="{% url 'bboard:detail' pk=bb.pk %}">
-                    {{ bb.title_and_price|upper }}</a>
-            </h2>
-        {% else %}
-            <h2>
-                <a href="{% url 'bboard:detail' pk=bb.pk %}">{{ bb.title_and_price }}</a>
-            </h2>
-        {% endif %}
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            {% if forloop.first %}
+                <h5 class="card-title">
+                    <a href="{% url 'bboard:detail' pk=bb.pk %}" class="card-link">{{ bb.title_and_price|upper }}</a>
+                </h5>
+            {% else %}
+                <h6 class="card-subtitle mb-2 text-body-secondary">
+                    <a href="{% url 'bboard:detail' pk=bb.pk %}">{{ bb.title_and_price }}</a>
+                </h6>
+            {% endif %}
 
-{#            <p>{{ bb.content }}</p>#}
-{#            <p>{{ bb.content|bbcode|safe }}</p>#}
-{#            <p>{{ bb.content|bbcode|safe }}</p>#}
+    {#            <p>{{ bb.content }}</p>#}
+    {#            <p>{{ bb.content|bbcode|safe }}</p>#}
+    {#            <p>{% bbcode bb.content %}</p>#}
+    {#            <p>{{ bb.content.rendered }}</p>#}
 
-        {% ifchanged %}
-            <p><a href="{% url 'bboard:by_rubric' bb.rubric.pk %}">
-                {{ bb.rubric.name }}</a></p>
-        {% endifchanged %}
+            {% ifchanged %}
+                <p><a href="{% url 'bboard:by_rubric' bb.rubric.pk %}" card_link="card_link">
+                    {{ bb.rubric.name }}</a></p>
+            {% endifchanged %}
 
-        <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
+            <p class="card-link">{{ bb.published|date:"d.m.Y H:i:s" }}</p>
+       </div>
     </div>
     {% endfor %}
     
+{% comment 'Теперь используем django_bootstrap5' %}
     <div>
         {% if page.has_previous %}
-            <a href="?page={{ page.previous_page_number }}"><&lt;</a>
+            <a href="?page={{ page.previous_page_number }}">&lt;</a>
             &nbsp; | &nbsp;
         {% endif %}
     
@@ -44,7 +48,9 @@
             <a href="?page={{ page.next_page_number }}">&gt;</a>
         {% endif %}
     </div>
+{% endcomment %}
     
+{% comment 'Теперь используем django_bootstrap5' %}
     {% if page.has_other_pages %}
         <nav aria-label="pagination">
             <ul class="pagination">
@@ -79,5 +85,8 @@
             </ul>
         </nav>
     {% endif %}
+{% endcomment %}
+    
+    {% bootstrap_pagination page size='sm' pages_to_show=5 %}
     
 {% endblock %}

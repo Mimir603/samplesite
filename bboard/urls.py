@@ -1,7 +1,5 @@
 from django.urls import path, re_path
 
-from django.conf import settings
-from django.conf.urls.static import static
 from bboard.models import Bb
 from bboard.views import (index, by_rubric, BbCreateView, add_and_save, detail,
                           BbByRubricView, BbDetailView, BbAddView, BbEditView,
@@ -32,6 +30,3 @@ urlpatterns = [
 
     path('search/', search, name='search'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -31,7 +31,7 @@ def index(request):
     rubrics = Rubric.objects.all().order_by_bb_count()
     # rubrics = Rubric.bbs.all()
 
-    paginator = Paginator(bbs, 2)
+    paginator = Paginator(bbs, 6)
 
     if 'page' in request.GET:
         page_num = request.GET['page']
@@ -181,13 +181,12 @@ def add_and_save(request):
 def detail(request, bb_id):
     bb = get_object_or_404(Bb, pk=bb_id)
 
-
     parser = get_parser()
     bb = Bb.objects.get(pk=bb_id)
     parsed_content = parser.render(bb.content)
 
     rubrics = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
-    context = {'bb': bb, 'rubrics': rubrics, 'parsed_conent': parsed_content}
+    context = {'bb': bb, 'rubrics': rubrics, 'parsed_content': parsed_content}
 
     return render(request, 'bboard/detail.html', context)
 
@@ -247,7 +246,7 @@ def rubrics(request):
                 rubric.delete()
 
             # formset.save()
-            return redirect('bboard:index')
+            return redirect('bboard:rubrics')
     else:
         formset = RubricFormSet()
 
