@@ -1,23 +1,28 @@
 {% extends "layout/basic.html" %}
 {% load bbcode_tags %}
 {% load django_bootstrap5 %}
+{% load bbtags %}
 
 {% block content %}
-    
+
+    {% lst ', ' '1' '2' '3' '4' '5' '6' '7' %}
+    {% ulist '1' '2' '3' '4' '5' '6' '7' %}
+
 {#    {{ block.super }}#}
 
-    {% for bb in bbs %}
+{% for bb in bbs %}
     <div class="card" style="width: 18rem;">
         <div class="card-body">
             {% if forloop.first %}
-                <h5 class="card-title">
+                <h3 class="card-title">
                     <a href="{% url 'bboard:detail' pk=bb.pk %}" class="card-link">{{ bb.title_and_price|upper }}</a>
-                </h5>
+                </h3>
             {% else %}
-                <h6 class="card-subtitle mb-2 text-body-secondary">
+                <h4 class="card-subtitle mb-2 text-body-secondary">
                     <a href="{% url 'bboard:detail' pk=bb.pk %}">{{ bb.title_and_price }}</a>
-                </h6>
+                </h4>
             {% endif %}
+
 
     {#            <p>{{ bb.content }}</p>#}
     {#            <p>{{ bb.content|bbcode|safe }}</p>#}
