@@ -1,3 +1,6 @@
+from datetime import datetime
+from os.path import splitext
+
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -26,6 +29,26 @@ class MinMaxValueValidator:
                                   code='out_of_range',
                                   params={'min': self.min_value, 'max': self.max_value})
 
+
+def get_timestamp_path(instance, filename):
+    return '%s%s' % (datetime.now().timestamp(), splitext(filename)[1])
+
+
+class Img(models.Model):
+    img = models.ImageField(verbose_name="Изображение", upload_to='images/%Y/%m/%d/')
+    desc = models.TextField(verbose_name='Описание')
+
+    class Meta:
+        verbose_name = 'Изображение'
+        verbose_name_plural = 'Изображение'
+
+class File(models.Model):
+    file = models.FileField(verbose_name="Файлы", upload_to='files/%Y/%m/%d')
+    desc = models.TextField(verbose_name='Описание')
+
+    class Meta:
+        verbose_name = 'Файлы'
+        verbose_name_plural = 'Файлы'
 
 class RubricQuerySet(models.QuerySet):
     def order_by_bb_count(self):
@@ -146,14 +169,19 @@ class Bb(models.Model):
     #                                 default=is_active_default
     #                                 )
 
+    img = models.ImageField(verbose_name='Изображение', blank=True, upload_to=get_timestamp_path)
+
     objects = models.Manager()
     by_price = BbManager()
 
-    def title_and_price(self):
-        if self.price:
-            return f'{self.title} ({self.price:.2f})'
-        else:
-            return self.title
+
+
+
+def title_and_price(self):
+    if self.price:
+        return f'{self.title} ({self.price:.2f})'
+    else:
+        return self.title
 
     title_and_price.short_description = 'Название и цена'
 

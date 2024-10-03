@@ -110,8 +110,10 @@ class BbEditView(UpdateView):
         context['rubrics'] = Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)
         return context
 
+
 def commit_handler():
     print('Транзакция закоммичена')
+
 
 # @transaction.non_atomic_requests
 # @transaction.atomic
@@ -119,7 +121,7 @@ def edit(request, pk):
     bb = Bb.objects.get(pk=pk)
 
     if request.method == 'POST':
-        bbf = BbForm(request.POST, instance=bb)
+        bbf = BbForm(request.POST, request.FILES, instance=bb)
         if bbf.is_valid():
             if bbf.has_changed():
                 bbf.save()
