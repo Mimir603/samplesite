@@ -40,6 +40,7 @@ urlpatterns = [
          name='password_change_done'),
 
     path('', include('bboard.urls', namespace='bboard')),
+    path('testapp/', include('testapp.urls', namespace='testapp')),
 ]
 
 urlpatterns += [

@@ -43,9 +43,12 @@ INSTALLED_APPS = [
     # 'django.contrib.postgres',
     'precise_bbcode',
     'django_bootstrap5',
+    'easy_thumbnails',
 
     'bboard.apps.BboardConfig',
     'testapp',
+
+    'django_cleanup',
 ]
 
 MIDDLEWARE = [
