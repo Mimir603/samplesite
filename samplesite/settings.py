@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'bboard.middlewares.test_middleware',
+    # 'bboard.middlewares.RubricMiddleware',
 ]
 
 ROOT_URLCONF = 'samplesite.urls'
@@ -83,6 +85,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 # 'django.template.context_processors.static',
+                'bboard.middlewares.rubrics',
             ],
         },
     },
@@ -198,3 +201,34 @@ BBCODE_ALLOW_CUSTOM_TAGS = False
 #     'success_css_class': 'has-success',
 #     'error_css_class': 'has-error',
 # }
+
+THUMBNAIL_ALIASES = {
+    'bboard.Bb.img': {
+        'default': {
+            'size': (500, 300),
+            'crop': 'scale',
+        },
+    },
+    'testapp': {
+        'default': {
+            'size': (400, 300),
+            'crop': 'smart',
+            'bw': True,
+       },
+    },
+    '': {
+        'default': {
+            'size': (180, 240),
+            'crop': 'scale',
+        },
+        'big': {
+            'size': (440, 580),
+            'crop': 'scale',
+        },
+    },
+}
+
+THUMBNAIL_DEFAULT_OPTIONS = {
+    'quality': 90,
+    'subsampling': 1,
+}
