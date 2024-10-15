@@ -24,6 +24,19 @@ class ImgForm(forms.ModelForm):
         fields = '__all__'
 
 
+class fileForm(forms.ModelForm):
+    file = forms.FileField(label='Файлы',
+                           validators=[validators.FileExtensionValidator(
+                               allowed_extensions=('docx', 'pdf', 'xlsx'))],
+                           error_messages={
+                               'invalid_extension': 'Этот формат не поддерживается'})
+    desc = forms.CharField(label='Описание', widget=forms.widgets.Textarea())
+
+    class Meta:
+        model = File
+        fields = '__all__'
+
+
 
 # BbForm = modelform_factory(Bb,
 #                            fields=('title', 'content', 'price', 'rubric'),
@@ -68,11 +81,6 @@ class BbForm(ModelForm):
                            error_messages={
                                'invalid_extension': 'Этот формат не поддерживается'})
 
-    file = forms.FileField(label='Файлы',
-                           validators=[validators.FileExtensionValidator(
-                               allowed_extensions=('xlsx', 'pdf'))],
-                           error_messages={
-                               'invalid_extension': 'Этот формат не поддерживается'})
 
     captcha = CaptchaField(label='Введите текст с картинки',
                            error_messages={'invalid': 'Неправильный текст'},
@@ -104,7 +112,7 @@ class BbForm(ModelForm):
 
     class Meta:
         model = Bb
-        fields = ('title', 'content', 'price', 'rubric', 'img', 'file')
+        fields = ('title', 'content', 'price', 'rubric', 'img', 'xlsx', 'pdf', 'docx')
         labels = {'title': 'Название товара'},
 
 

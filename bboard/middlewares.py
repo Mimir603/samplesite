@@ -2,8 +2,9 @@ from django.db.models import Count
 
 from .models import Rubric
 
+
 def rubrics(request):
-    return {'rubrics': Rubric.Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)}
+    return {'rubrics': Rubric.objects.annotate(cnt=Count('bb')).filter(cnt__gt=0)}
 
 
 class RubricMiddleware:

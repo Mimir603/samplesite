@@ -11,12 +11,31 @@ FILES_ROOT = BASE_DIR / 'files'
 
 
 def index(request):
+
+    if 'counter' in request.COOKIES:
+        print('COOKIES: counter =', request.COOKIES['counter'])
+        cnt = int(request.COOKIES['counter']) + 1
+    else:
+        cnt = 1
+
+
+    if 'counter' in request.sessions:
+        print('SESSION: counter =', request.sessions['counter'])
+        cnt = int(request.sessions['counter']) + 1
+    else:
+        cnt = 1
+
     imgs = []
 
     for entry in os.scandir(FILES_ROOT):
         imgs.append(os.path.basename(entry))
+
     context = {'imgs': imgs}
-    return render(request, 'testapp/index.html', context)
+    response = render(request, 'testapp/index.html', context)
+    response.set_cookie('counter', cnt)
+    response.sessions['counter'] = cnt
+
+    return response
 
 
 def get(request, filename):
@@ -42,3 +61,18 @@ def add(request):
 
     context = {'form': form}
     return render(request, 'testapp/add.html', context)
+
+
+def test_cookie(request):
+    if request.method == 'POST':
+        if request.session.test_cookie_worked():
+            request.session.delete_test_cookie()
+    else:
+        pass
+
+    request.session.set_test_cookie()
+    return render(request, 'testapp/test_cookie.html')
+
+
+
+

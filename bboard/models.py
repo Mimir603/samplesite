@@ -169,7 +169,7 @@ class Bb(models.Model):
     #                                 default=is_active_default
     #                                 )
 
-    img = models.ImageField(verbose_name='Изображение', blank=True, upload_to=get_timestamp_path)
+    img = models.ImageField(verbose_name='Изображение', blank=False, upload_to=get_timestamp_path)
 
     objects = models.Manager()
     by_price = BbManager()

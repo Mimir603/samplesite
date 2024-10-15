@@ -232,3 +232,17 @@ THUMBNAIL_DEFAULT_OPTIONS = {
     'quality': 90,
     'subsampling': 1,
 }
+
+#SESSIONS
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+# SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializers'
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# SESSION_SAVE_EVERY_REQUEST = False
+# SESSION_COOKIE_AGE = 1_209_600
+
+#MESSAGES
+# MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
+#MESSAGE_LEVEL = 20
