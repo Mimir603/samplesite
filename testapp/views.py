@@ -1,8 +1,11 @@
 import os
 from datetime import datetime
 
+from django.core import send_mail, send_mass_mail
+from django.core.mail import EmailMessage, get_connection
 from django.http import FileResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 
 from samplesite.settings import BASE_DIR
 from testapp.forms import ImgForm
@@ -74,5 +77,49 @@ def test_cookie(request):
     return render(request, 'testapp/test_cookie.html')
 
 
+def test_email(request):
+    # em = EmailMessage(subject='Test', body='Test', to=['user@supersite.ru'])
+    # em.send()
+    #
+    # em = EmailMessage(subject='Ваш новый пароль',
+    #                   body='Ваш новый пароль находится во вложении',
+    #                   attachments=[('password.txt', '1234567890', 'text/plain')],
+    #                   to=['user@supersite.ru'])
+    # em.attach_file(r'requirements.txt')
+    # em.send()
+    #
+    # context = {'user': 'vasya_lox'}
+    # s = render_to_string('email/letter.txt', context)
+    # em = EmailMessage(subject='Оповещение', body=s, to=['user@supersite.ru'])
+    # em.send()
+
+    con = get_connection()
+    con.open()
+
+    email1 = EmailMessage(..., connection=con)
+    email1.send()
+    email2 = EmailMessage(..., connection=con)
+    email2.send()
+    email3 = EmailMessage(..., connection=con)
+    email3.send()
+
+    con.close()
+
+    email1 = EmailMessage(...)
+    email2 = EmailMessage(...)
+    email3 = EmailMessage(...)
+
+    con.send_message([email1, email2, email3])
+    con.close()
+
+    #Высокоуровневый
+    send_mail('Test email', 'Test!!!', 'webmaster@localhost', ['user@othersite.kz'],
+              html_message='<h1>Test!!!</h1>')
+
+    msg1 = ('Подписка', 'Подтвердите, пожалуйста, подпиську', 'subscribe@supersite.kz',
+            ['user@othersite.kz', 'user2@thirdsite.kz']),
+    msg2 = ('Подписка', 'Поздравляем, ваша подписька подтверждена', 'subscribe@supersite.kz',
+            ['megauser@othersite.kz'])
+    send_mass_mail((msg1, msg2))
 
 

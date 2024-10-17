@@ -8,7 +8,7 @@ from django import forms
 
 from captcha.fields import CaptchaField
 
-from bboard.models import Bb, Rubric, Img
+from bboard.models import Bb, Rubric, Img, File
 
 
 class ImgForm(forms.ModelForm):
@@ -24,7 +24,7 @@ class ImgForm(forms.ModelForm):
         fields = '__all__'
 
 
-class fileForm(forms.ModelForm):
+class FileForm(forms.ModelForm):
     file = forms.FileField(label='Файлы',
                            validators=[validators.FileExtensionValidator(
                                allowed_extensions=('docx', 'pdf', 'xlsx'))],
@@ -80,7 +80,12 @@ class BbForm(ModelForm):
                                allowed_extensions=('gif', 'jpg', 'png'))],
                            error_messages={
                                'invalid_extension': 'Этот формат не поддерживается'})
-
+    #
+    # file = forms.FileField(label='Документы',
+    #                        validators=[validators.FileExtensionValidator(
+    #                            allowed_extensions=('xlsx', 'docx', 'pdf'))],
+    #                        error_messages={
+    #                            'invalid_extension': 'Этот формат не поддерживается'})
 
     captcha = CaptchaField(label='Введите текст с картинки',
                            error_messages={'invalid': 'Неправильный текст'},
@@ -112,7 +117,7 @@ class BbForm(ModelForm):
 
     class Meta:
         model = Bb
-        fields = ('title', 'content', 'price', 'rubric', 'img', 'xlsx', 'pdf', 'docx')
+        fields = ('title', 'content', 'price', 'rubric', 'img')
         labels = {'title': 'Название товара'},
 
 

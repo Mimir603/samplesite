@@ -42,6 +42,7 @@ class Img(models.Model):
         verbose_name = 'Изображение'
         verbose_name_plural = 'Изображение'
 
+
 class File(models.Model):
     file = models.FileField(verbose_name="Файлы", upload_to='files/%Y/%m/%d')
     desc = models.TextField(verbose_name='Описание')
@@ -169,7 +170,9 @@ class Bb(models.Model):
     #                                 default=is_active_default
     #                                 )
 
-    img = models.ImageField(verbose_name='Изображение', blank=False, upload_to=get_timestamp_path)
+    img = models.ImageField(verbose_name='Изображение', blank=True, upload_to=get_timestamp_path)
+
+    # file = models.FileField(verbose_name='Документы', blank=True, upload_to=get_timestamp_path)
 
     objects = models.Manager()
     by_price = BbManager()
@@ -177,11 +180,11 @@ class Bb(models.Model):
 
 
 
-def title_and_price(self):
-    if self.price:
-        return f'{self.title} ({self.price:.2f})'
-    else:
-        return self.title
+    def title_and_price(self):
+        if self.price:
+            return f'{self.title} ({self.price:.2f})'
+        else:
+            return self.title
 
     title_and_price.short_description = 'Название и цена'
 
