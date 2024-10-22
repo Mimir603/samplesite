@@ -1,10 +1,7 @@
 import os
-import smtplib
 from datetime import datetime
-from email.mime.text import MIMEText
 
-# from django.core import send_mail, send_mass_mail
-from django.core.mail import EmailMessage, get_connection
+from django.core.mail import EmailMessage, get_connection, send_mail, send_mass_mail, mail_admins
 from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
@@ -16,17 +13,15 @@ FILES_ROOT = BASE_DIR / 'files'
 
 
 def index(request):
-
     if 'counter' in request.COOKIES:
         print('COOKIES: counter =', request.COOKIES['counter'])
         cnt = int(request.COOKIES['counter']) + 1
     else:
         cnt = 1
 
-
-    if 'counter' in request.sessions:
-        print('SESSION: counter =', request.sessions['counter'])
-        cnt = int(request.sessions['counter']) + 1
+    if 'counter' in request.session:
+        print('SESSION: counter =', request.session['counter'])
+        cnt = int(request.session['counter']) + 1
     else:
         cnt = 1
 
@@ -38,14 +33,13 @@ def index(request):
     context = {'imgs': imgs}
     response = render(request, 'testapp/index.html', context)
     response.set_cookie('counter', cnt)
-    response.sessions['counter'] = cnt
-
+    request.session['counter'] = cnt
     return response
 
 
 def get(request, filename):
     fn = os.path.join(FILES_ROOT, filename)
-    return FileResponse(open(fn, 'rb'), context_type='application/octet-stream')
+    return FileResponse(open(fn, 'rb'), content_type='application/octet-stream')
 
 
 def add(request):
@@ -59,6 +53,7 @@ def add(request):
             with open(fn, 'wb+') as destination:
                 for chunk in upload_file.chunks():
                     destination.write(chunk)
+            # return redirect('testapp:index')
             form.save()
             return redirect('testapp:index')
     else:
@@ -72,8 +67,10 @@ def test_cookie(request):
     if request.method == 'POST':
         if request.session.test_cookie_worked():
             request.session.delete_test_cookie()
-    else:
-        pass
+            # Куки поддерживаются
+        else:
+            pass
+            # Куки не поддерживаются
 
     request.session.set_test_cookie()
     return render(request, 'testapp/test_cookie.html')
@@ -85,71 +82,48 @@ def test_email(request):
     #
     # em = EmailMessage(subject='Ваш новый пароль',
     #                   body='Ваш новый пароль находится во вложении',
-    #                   attachments=[('password.txt', '1234567890', 'text/plain')],
+    #                   attachments=[('requirements.txt', '123456789', 'text/plain')],
+    #                   to=['user@supersite.ru'])
+    # em.send()
+    #
+    # em = EmailMessage(subject='Запрошенный вами файл',
+    #                   body='Получите запрошенный вами файл',
     #                   to=['user@supersite.ru'])
     # em.attach_file(r'requirements.txt')
     # em.send()
-    #
-    # context = {'user': 'vasya_lox'}
+
+    # context = {'user': 'Вася Пупкин'}
     # s = render_to_string('email/letter.txt', context)
     # em = EmailMessage(subject='Оповещение', body=s, to=['user@supersite.ru'])
     # em.send()
 
-    con = get_connection()
-    con.open()
+    # con = get_connection()
+    # con.open()
 
-    email1 = EmailMessage(..., connection=con)
-    email1.send()
-    email2 = EmailMessage(..., connection=con)
-    email2.send()
-    email3 = EmailMessage(..., connection=con)
-    email3.send()
+    # email1 = EmailMessage(..., connection=con)  # не забыть про subject, body, to
+    # email1.send()
+    # email2 = EmailMessage(..., connection=con)
+    # email2.send()
+    # email3 = EmailMessage(..., connection=con)
+    # email3.send()
 
-    con.close()
+    # email1 = EmailMessage(...)
+    # email2 = EmailMessage(...)
+    # email3 = EmailMessage(...)
+    #
+    # con.send_messages([email1, email2, email3])
+    # con.close()
 
-    email1 = EmailMessage(...)
-    email2 = EmailMessage(...)
-    email3 = EmailMessage(...)
-
-    con.send_message([email1, email2, email3])
-    con.close()
-
-    #Высокоуровневый
+    # Высокоуровневые
     # send_mail('Test email', 'Test!!!', 'webmaster@localhost', ['user@othersite.kz'],
     #           html_message='<h1>Test!!!</h1>')
-    #
-    # msg1 = ('Подписка', 'Подтвердите, пожалуйста, подпиську', 'subscribe@supersite.kz',
-    #         ['user@othersite.kz', 'user2@thirdsite.kz']),
-    # msg2 = ('Подписка', 'Поздравляем, ваша подписька подтверждена', 'subscribe@supersite.kz',
-    #         ['megauser@othersite.kz'])
+
+    # msg1 = ('Подписка', 'Подтвердите, пожалуйста, подписку', 'subscribe@supersite.kz',
+    #         ['user@othersite.kz', 'user2@thirdsite.kz'])
+    # msg2 = ('Подписка', 'Ваша подписка подтверждена', 'subscribe@supersite.kz',
+    #         ['megauser@supersite.kz'])
     # send_mass_mail((msg1, msg2))
 
-
-def practice_email(message):
-    # em = EmailMessage(subject='Приветсвие', body=f'Доброго времени суток, дружище!', to=['ustricus@gmail.com'])
-    # em.send()
-
-    sender = "ustricus@gmail.com"
-    password = os.getenv("EMAIL PASSWORD")
-
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-
-    try:
-        server.login(sender, password)
-        msg = MIMEText(message)
-        msg["Subject"] = "CLICK ME PLEASE!"
-        server.sendmail(sender, password, msg.as_string())
-
-        return "The message is sent."
-    except Exception as _ex:
-        return f"{_ex}\nCheck your login or password please!"
-
-
-def main():
-    message = input("Enter your message:")
-    print(practice_email(message=message))
-
-
-if __name__ == '__main__':
-    main()
+    mail_admins('Подъём!', 'Админ, не спи!',
+                html_message='<strong>Админ, не спи!!!</strong>')
+    pass

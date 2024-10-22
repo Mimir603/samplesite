@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from tempfile import template
 
+from django.contrib import messages
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$_@0d@@#!x!c=udn6cj$@%+3)q!ay!#gl@_c=czm!v*%7!3i0b'
+SECRET_KEY = 'django-insecure-kdsyh9j&6ks^*@$qdpeaqid090k%f6bm16k5w+j+qldjdgvc*q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
     'bboard.apps.BboardConfig',
     'testapp',
 
-    'django_cleanup',
+    'django_cleanup',  # Только в самом низу
 ]
 
 MIDDLEWARE = [
@@ -56,10 +58,10 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    # 'bboard.middlewares.test_middleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'bboard.middlewares.test_middleware',
     # 'bboard.middlewares.RubricMiddleware',
 ]
 
@@ -73,10 +75,10 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             # 'libraries': {
-            #     'bbtags': 'bboard.templatetags.btags',
+            #     'bbtags': 'bboard.templatetags.bbtags',  # load нужен
             # },
             # 'builtins': [
-            #     'bboard.templatetags.bbtags' #load не нужон
+            #     'bboard.templatetags.bbtags'  # load не нужен
             # ],
             # 'autoescape': True,
             'context_processors': [
@@ -157,7 +159,8 @@ STATICFILES_DIRS = [
 # STATIC_ROOT = '/static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -202,6 +205,8 @@ BBCODE_ALLOW_CUSTOM_TAGS = False
 #     'error_css_class': 'has-error',
 # }
 
+# FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440  # 2.5 Mb
+
 THUMBNAIL_ALIASES = {
     'bboard.Bb.img': {
         'default': {
@@ -214,7 +219,7 @@ THUMBNAIL_ALIASES = {
             'size': (400, 300),
             'crop': 'smart',
             'bw': True,
-       },
+        },
     },
     '': {
         'default': {
@@ -222,8 +227,8 @@ THUMBNAIL_ALIASES = {
             'crop': 'scale',
         },
         'big': {
-            'size': (440, 580),
-            'crop': 'scale',
+            'size': (480, 640),
+            'crop': '10,10',
         },
     },
 }
@@ -233,51 +238,49 @@ THUMBNAIL_DEFAULT_OPTIONS = {
     'subsampling': 1,
 }
 
-#SESSIONS
+# SESSIONS
 # SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-# SESSION_ENGINE = 'django.contrib.sessions.backends.file'
-# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-# SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-# SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializers'
+# SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # SESSION_SAVE_EVERY_REQUEST = False
 # SESSION_COOKIE_AGE = 1_209_600
 
-#MESSAGES
+# MESSAGES
 # MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
-#MESSAGE_LEVEL = 20
+# MESSAGE_LEVEL = 20  # INFO
+# MESSAGE_LEVEL = messages.DEBUG
 
 # EMAIL
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"  # django.core.main.outbox
+# EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 
 # DEFAULT_FROM_EMAIL = 'webmaster@localhost'
-#
-# EMAIL_HOST = 'localhost'
-# EMAIL_PORT = 25
-# EMAIL_HOST_USER = ''
-# EMAIL_HOST_PASSWORD = ''
-#
-# EMAIL_USE_TLS = False
-# EMAIL_USE_SSL = False
-#
-# EMAIL_SSL_CERTFILE = None
-# EMAIL_SSL_KEYFILE = None
-#
-# EMAIL_TIMEOUT = None
-# EMAIL_USE_LOCALTIME = False
-#
-# EMAIL_FILE_PATH = ''
-#
-# ADMINS = [
-#     ('admin', 'admin@localhost'),
-# ]
-#
-# MANAGERS = [
-#     ('manager', 'manager@localhost'),
-# ]
-#
-# mail_admins('Подъ')
+
+# Только с SMTP
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+
+EMAIL_USE_SSL = False
+EMAIL_USE_TLS = False
+
+EMAIL_SSL_CERTFILE = None
+EMAIL_SSL_KEYFILE = None
+
+EMAIL_TIMEOUT = None
+EMAIL_USE_LOCALTIME = False
+
+# Только для "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = ''
+
+ADMINS = [
+    ('admin', 'admin@localhost'),
+]
+
+MANAGERS = [
+    ('manager', 'manager@localhost'),
+]
