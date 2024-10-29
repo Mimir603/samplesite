@@ -3,9 +3,8 @@ import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
 
-# from django.core import send_mail, send_mass_mail
-from django.core.mail import EmailMessage, get_connection
-from django.http import FileResponse
+from django.core.mail import EmailMessage, get_connection, send_mail
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
@@ -22,7 +21,6 @@ def index(request):
         cnt = int(request.COOKIES['counter']) + 1
     else:
         cnt = 1
-
 
     if 'counter' in request.sessions:
         print('SESSION: counter =', request.sessions['counter'])
@@ -79,7 +77,7 @@ def test_cookie(request):
     return render(request, 'testapp/test_cookie.html')
 
 
-def test_email(request):
+# def test_email(request):
     # em = EmailMessage(subject='Test', body='Test', to=['user@supersite.ru'])
     # em.send()
     #
@@ -125,31 +123,41 @@ def test_email(request):
     # send_mass_mail((msg1, msg2))
 
 
-def practice_email(message):
-    # em = EmailMessage(subject='Приветсвие', body=f'Доброго времени суток, дружище!', to=['ustricus@gmail.com'])
-    # em.send()
+# def practice_email(message):
+#     # em = EmailMessage(subject='Приветсвие', body=f'Доброго времени суток, дружище!', to=['ustricus@gmail.com'])
+#     # em.send()
+#
+#     sender = "ustricus@gmail.com"
+#     password = os.getenv("EMAIL PASSWORD")
+#
+#     server = smtplib.SMTP('smtp.gmail.com', 587)
+#     server.starttls()
+#
+#     try:
+#         server.login(sender, password)
+#         msg = MIMEText(message)
+#         msg["Subject"] = "CLICK ME PLEASE!"
+#         server.sendmail(sender, password, msg.as_string())
+#
+#         return "The message is sent."
+#     except Exception as _ex:
+#         return f"{_ex}\nCheck your login or password please!"
+#
+#
+# def main():
+#     message = input("Enter your message:")
+#     print(practice_email(message=message))
+#
+#
+# if __name__ == '__main__':
+#     main()
 
-    sender = "ustricus@gmail.com"
-    password = os.getenv("EMAIL PASSWORD")
 
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-
-    try:
-        server.login(sender, password)
-        msg = MIMEText(message)
-        msg["Subject"] = "CLICK ME PLEASE!"
-        server.sendmail(sender, password, msg.as_string())
-
-        return "The message is sent."
-    except Exception as _ex:
-        return f"{_ex}\nCheck your login or password please!"
-
-
-def main():
-    message = input("Enter your message:")
-    print(practice_email(message=message))
-
-
-if __name__ == '__main__':
-    main()
+def send_test_email(request):
+    send_mail(
+        'Тестовая тема',
+        'Это тестовое сообщение.',
+        'your-email@gmail.com',  # отправитель
+        ['recipient@example.com'],  # получатель
+    )
+    return HttpResponse("Письмо отправлено успешно.")

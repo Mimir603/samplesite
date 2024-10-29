@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'precise_bbcode',
     'django_bootstrap5',
     'easy_thumbnails',
+    'rest_framework',
+    'corsheaders',
 
     'bboard.apps.BboardConfig',
     'testapp',
@@ -54,6 +56,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -247,37 +252,32 @@ THUMBNAIL_DEFAULT_OPTIONS = {
 # MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 #MESSAGE_LEVEL = 20
 
+
 # EMAIL
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
-# DEFAULT_FROM_EMAIL = 'webmaster@localhost'
-#
-# EMAIL_HOST = 'localhost'
-# EMAIL_PORT = 25
-# EMAIL_HOST_USER = ''
-# EMAIL_HOST_PASSWORD = ''
-#
-# EMAIL_USE_TLS = False
-# EMAIL_USE_SSL = False
-#
-# EMAIL_SSL_CERTFILE = None
-# EMAIL_SSL_KEYFILE = None
-#
-# EMAIL_TIMEOUT = None
-# EMAIL_USE_LOCALTIME = False
-#
-# EMAIL_FILE_PATH = ''
-#
-# ADMINS = [
-#     ('admin', 'admin@localhost'),
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your-app-password'
+
+# CORS HEADERS
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_URLS_REGEX = r'^/api/.*$'
+
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:8000',
 # ]
 #
-# MANAGERS = [
-#     ('manager', 'manager@localhost'),
+# CORS_ALLOWED_ORIGINS = [
+#     r'^https?://(www|admin)\.bboard\.ru$',
+#     r'^https?://(www\.)?bb\/net$',
 # ]
 #
-# mail_admins('Подъ')
+# CORS_ALLOW_METHODS = ['GET','POST']

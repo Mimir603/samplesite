@@ -19,9 +19,13 @@ from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.forms.formsets import ORDERING_FIELD_NAME
 from precise_bbcode.bbcode import get_parser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from bboard.forms import BbForm, RubricFormSet, SearchForm
 from bboard.models import Bb, Rubric
+
+from bboard.serializers import RubricSerializer
 
 
 def index(request):
@@ -283,3 +287,8 @@ def search(request):
     return render(request, 'bboard/search.html', context)
 
 
+@api_view(['GET'])
+def api_rubrics(request):
+        rubrics = Rubric.objects.all()
+        serializer = RubricSerializer(rubrics, many=True)
+        return Response(serializer.data)
