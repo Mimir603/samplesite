@@ -6,7 +6,7 @@ from django.db import transaction
 from django.db.models import Count
 from django.forms import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, \
-    Http404, StreamingHttpResponse, FileResponse, JsonResponse
+Http404, StreamingHttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.template import loader
 from django.template.loader import get_template, render_to_string
@@ -289,6 +289,12 @@ def search(request):
 
 @api_view(['GET'])
 def api_rubrics(request):
-        rubrics = Rubric.objects.all()
-        serializer = RubricSerializer(rubrics, many=True)
-        return Response(serializer.data)
+    rubrics = Rubric.objects.all()
+    serializer = RubricSerializer(rubrics, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def api_rubric_detail(request, pk):
+    rubric = Rubric.objects.get(pk=pk)
+    serializer = RubricSerializer(rubric)
+    return Response(serializer.data)

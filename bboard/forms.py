@@ -6,7 +6,7 @@ from django.forms import (ModelForm, modelform_factory, DecimalField,
 from django.forms.widgets import Select
 from django import forms
 
-from captcha.fields import CaptchaField
+# from captcha.fields import CaptchaField
 
 from bboard.models import Bb, Rubric, Img, File
 
@@ -87,12 +87,12 @@ class BbForm(ModelForm):
     #                        error_messages={
     #                            'invalid_extension': 'Этот формат не поддерживается'})
 
-    captcha = CaptchaField(label='Введите текст с картинки',
-                           error_messages={'invalid': 'Неправильный текст'},
-                           # generator='captcha.helpers.random_char_challenge',
-                           # generator='captcha.helpers.math_challenge',
-                           # generator='captcha.helpers.word_challenge',
-                           )
+    # captcha = CaptchaField(label='Введите текст с картинки',
+    #                        error_messages={'invalid': 'Неправильный текст'},
+    #                        # generator='captcha.helpers.random_char_challenge',
+    #                        # generator='captcha.helpers.math_challenge',
+    #                        # generator='captcha.helpers.word_challenge',
+    #                        )
 
     def clean_title(self):
         val = self.cleaned_data['title']
