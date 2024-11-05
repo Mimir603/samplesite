@@ -19,13 +19,16 @@ from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.forms.formsets import ORDERING_FIELD_NAME
 from precise_bbcode.bbcode import get_parser
+from rest_framework import status, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from bboard.forms import BbForm, RubricFormSet, SearchForm
 from bboard.models import Bb, Rubric
 
-from bboard.serializers import RubricSerializer
+from bboard.serializers import RubricSerializer, BbSerializer
 
 
 def index(request):
@@ -287,14 +290,104 @@ def search(request):
     return render(request, 'bboard/search.html', context)
 
 
+@api_view(['GET', 'POST'])
+def api_rubrics(request):
+    if request.method == 'GET':
+        rubric = Rubric.objects.all()
+        serializer = RubricSerializer(rubric)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = RubricSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 def api_rubrics(request):
     rubrics = Rubric.objects.all()
     serializer = RubricSerializer(rubrics, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def api_rubric_detail(request, pk):
     rubric = Rubric.objects.get(pk=pk)
-    serializer = RubricSerializer(rubric)
-    return Response(serializer.data)
+
+    if request.method == 'GET':
+        serializer = RubricSerializer(rubric)
+        return Response(serializer.data)
+    elif request.method == 'PUT' or request.method == 'PATCH':
+        serializer = RubricSerializer(rubric, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        rubric.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# НИЗКОУРОВНЕВЫЙ
+# class APIRubrics(APIView):
+#     def get(self, request):
+#         rubrics = Rubric.objects.all()
+#         serializer = RubricSerializer(rubrics, many=True)
+#         return Response(serializer.data)
+#
+#     def post(self, request):
+#         serializer = RubricSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class APIRubrics(generics.ListCreateAPIView):
+    queryset = Rubric.objects.all()
+    serializer_class = RubricSerializer
+
+
+class APIRubricDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Rubric.objects.all()
+    serializer_class = RubricSerializer
+
+
+class APIRubricList(generics.ListAPIView):
+    queryset = Rubric.objects.all()
+    serializer_class = RubricSerializer
+
+
+class APIRubricViewSet(ModelViewSet):
+    queryset = Rubric.objects.all()
+    serializer_class = RubricSerializer
+
+
+class APIRubricReadSet(ReadOnlyModelViewSet):
+    queryset = Rubric.objects.all()
+    serializer_class = RubricSerializer
+
+#===============================================================
+
+
+class APIBboards(generics.ListCreateAPIView):
+    queryset = Bb.objects.all()
+    serializer_class = BbSerializer
+
+
+class APIBboardDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Bb.objects.all()
+    serializer_class = BbSerializer
+
+
+class APIBboardList(generics.ListAPIView):
+    queryset = Bb.objects.all()
+    serializer_class = BbSerializer
+
+
+class APIBboardViewSet(ModelViewSet):
+    queryset = Bb.objects.all()
+    serializer_class = BbSerializer
+
+
+

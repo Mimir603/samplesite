@@ -4,6 +4,7 @@ from os.path import splitext
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.http import HttpResponse
 from precise_bbcode.fields import BBCodeTextField
 
 

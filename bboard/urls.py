@@ -1,17 +1,33 @@
-from django.urls import path, re_path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from bboard.models import Bb
 from bboard.views import (index, by_rubric, BbCreateView, add_and_save, detail,
                           BbByRubricView, BbDetailView, BbAddView, BbEditView,
                           BbDeleteView, BbIndexView, BbRedirectView, edit,
-                          rubrics, search, api_rubrics, api_rubric_detail)  # add, add_save
+                          rubrics, search, api_rubrics, api_rubric_detail, APIRubrics, APIRubricDetail,
+                          APIRubricViewSet, APIBboards, APIBboardViewSet)  # add, add_save
 
 app_name = 'bboard'
 
-urlpatterns = [
-    path('api/rubrics/<int:pk>/', api_rubric_detail),
+router = DefaultRouter()
+router.register('rubrics', APIRubricViewSet)
 
-    path('api/rubrics/', api_rubrics),
+BbRouter = DefaultRouter()
+BbRouter.register('rubrics', APIBboardViewSet)
+
+urlpatterns = [
+    # path('api/rubrics/<int:pk>/', api_rubric_detail),
+    # path('api/rubrics/', api_rubrics),
+
+    # path('api/rubrics/', APIRubrics.as_view()),
+    # path('api/rubrics/<int:pk>/', APIRubricDetail.as_view()),
+
+    path('api/', include(router.urls)), #api/rubrics/ выдает GET и POST,
+                                        #api/rubrics/<ключ>, выдает GET, PUT и DELETE
+
+    path('api/bb/<int:pk>/', APIBboards.as_view()),
+    path('api/bb/<int:pk>/', APIRubricDetail.as_view()),
 
     path('rubrics/', rubrics, name='rubrics'),
     path('add/', BbCreateView.as_view(), name='add'),

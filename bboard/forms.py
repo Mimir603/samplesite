@@ -75,11 +75,11 @@ class BbForm(ModelForm):
                                     # disabled=True,
                                     )
 
-    img = forms.ImageField(label='Изображение',
-                           validators=[validators.FileExtensionValidator(
-                               allowed_extensions=('gif', 'jpg', 'png'))],
-                           error_messages={
-                               'invalid_extension': 'Этот формат не поддерживается'})
+    # img = forms.ImageField(label='Изображение',
+    #                        validators=[validators.FileExtensionValidator(
+    #                            allowed_extensions=('gif', 'jpg', 'png'))],
+    #                        error_messages={
+    #                            'invalid_extension': 'Этот формат не поддерживается'})
     #
     # file = forms.FileField(label='Документы',
     #                        validators=[validators.FileExtensionValidator(
