@@ -23,11 +23,11 @@ urlpatterns = [
     # path('api/rubrics/', APIRubrics.as_view()),
     # path('api/rubrics/<int:pk>/', APIRubricDetail.as_view()),
 
-    path('api/', include(router.urls)), #api/rubrics/ выдает GET и POST,
+    path('api/', include(BbRouter.urls)), #api/rubrics/ выдает GET и POST,
                                         #api/rubrics/<ключ>, выдает GET, PUT и DELETE
 
-    path('api/bb/<int:pk>/', APIBboards.as_view()),
-    path('api/bb/<int:pk>/', APIRubricDetail.as_view()),
+    path('api/bboard/', APIBboards.as_view()),
+    path('api/bboard/<int:pk>/', APIRubricDetail.as_view()),
 
     path('rubrics/', rubrics, name='rubrics'),
     path('add/', BbCreateView.as_view(), name='add'),
