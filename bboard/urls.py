@@ -6,28 +6,28 @@ from bboard.views import (index, by_rubric, BbCreateView, add_and_save, detail,
                           BbByRubricView, BbDetailView, BbAddView, BbEditView,
                           BbDeleteView, BbIndexView, BbRedirectView, edit,
                           rubrics, search, api_rubrics, api_rubric_detail, APIRubrics, APIRubricDetail,
-                          APIRubricViewSet, APIBboards, APIBboardViewSet)  # add, add_save
+                          APIRubricViewSet)
 
 app_name = 'bboard'
 
 router = DefaultRouter()
 router.register('rubrics', APIRubricViewSet)
 
-BbRouter = DefaultRouter()
-BbRouter.register('rubrics', APIBboardViewSet)
+# BbRouter = DefaultRouter()
+# BbRouter.register('rubrics', APIBboardViewSet)
 
 urlpatterns = [
     # path('api/rubrics/<int:pk>/', api_rubric_detail),
     # path('api/rubrics/', api_rubrics),
-
+    #
     # path('api/rubrics/', APIRubrics.as_view()),
     # path('api/rubrics/<int:pk>/', APIRubricDetail.as_view()),
 
-    path('api/', include(BbRouter.urls)), #api/rubrics/ выдает GET и POST,
-                                        #api/rubrics/<ключ>, выдает GET, PUT и DELETE
-
-    path('api/bboard/', APIBboards.as_view()),
-    path('api/bboard/<int:pk>/', APIRubricDetail.as_view()),
+    path('api/', include(router.urls)), #api/rubrics/ выдает GET и POST,
+    #                                     #api/rubrics/<ключ>, выдает GET, PUT и DELETE
+    #
+    # path('api/bboard/', APIBboards.as_view()),
+    # path('api/bboard/<int:pk>/', APIRubricDetail.as_view()),
 
     path('rubrics/', rubrics, name='rubrics'),
     path('add/', BbCreateView.as_view(), name='add'),

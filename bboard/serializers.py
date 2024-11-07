@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bboard.models import Rubric, Bb
+from bboard.models import Rubric
 
 
 class RubricSerializer(serializers.ModelSerializer):
@@ -9,8 +9,8 @@ class RubricSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class BbSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Bb
-        fields = ('title', 'price', 'rubric')
-        
+# class BbSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Bb
+#         fields = ('title', 'price', 'rubric')
+#

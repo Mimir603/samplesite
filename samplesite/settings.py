@@ -253,13 +253,6 @@ THUMBNAIL_DEFAULT_OPTIONS = {
 #MESSAGE_LEVEL = 20
 
 
-# EMAIL
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -281,3 +274,9 @@ CORS_URLS_REGEX = r'^/api/.*$'
 # ]
 #
 # CORS_ALLOW_METHODS = ['GET','POST']
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    )
+}

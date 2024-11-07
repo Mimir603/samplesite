@@ -20,7 +20,8 @@ from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteVi
 from django.forms.formsets import ORDERING_FIELD_NAME
 from precise_bbcode.bbcode import get_parser
 from rest_framework import status, generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
@@ -28,7 +29,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from bboard.forms import BbForm, RubricFormSet, SearchForm
 from bboard.models import Bb, Rubric
 
-from bboard.serializers import RubricSerializer, BbSerializer
+from bboard.serializers import RubricSerializer
 
 
 def index(request):
@@ -291,6 +292,7 @@ def search(request):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes((IsAuthenticated))
 def api_rubrics(request):
     if request.method == 'GET':
         rubric = Rubric.objects.all()
@@ -361,6 +363,7 @@ class APIRubricList(generics.ListAPIView):
 class APIRubricViewSet(ModelViewSet):
     queryset = Rubric.objects.all()
     serializer_class = RubricSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class APIRubricReadSet(ReadOnlyModelViewSet):
@@ -370,24 +373,24 @@ class APIRubricReadSet(ReadOnlyModelViewSet):
 #===============================================================
 
 
-class APIBboards(generics.ListCreateAPIView):
-    queryset = Bb.objects.all()
-    serializer_class = BbSerializer
-
-
-class APIBboardDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Bb.objects.all()
-    serializer_class = BbSerializer
-
-
-class APIBboardList(generics.ListAPIView):
-    queryset = Bb.objects.all()
-    serializer_class = BbSerializer
-
-
-class APIBboardViewSet(ModelViewSet):
-    queryset = Bb.objects.all()
-    serializer_class = BbSerializer
+# class APIBboards(generics.ListCreateAPIView):
+#     queryset = Bb.objects.all()
+#     serializer_class = BbSerializer
+#
+#
+# class APIBboardDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Bb.objects.all()
+#     serializer_class = BbSerializer
+#
+#
+# class APIBboardList(generics.ListAPIView):
+#     queryset = Bb.objects.all()
+#     serializer_class = BbSerializer
+#
+#
+# class APIBboardViewSet(ModelViewSet):
+#     queryset = Bb.objects.all()
+#     serializer_class = BbSerializer
 
 
 

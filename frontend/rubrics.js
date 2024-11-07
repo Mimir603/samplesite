@@ -4,9 +4,15 @@ const list = document.querySelector('#list');
 const itemId = document.querySelector('#id');
 const itemName = document.querySelector('#name');
 
+const username = 'admin';
+const password = '123';
+const hiding = window.btoa(`${username}:${password}`);
+
 async function loadItem(evt) {
     evt.preventDefault();
-    const result = await fetch(evt.target.href);
+    const result = await fetch(evt.target.href, {
+            headers: { 'Authorization': `Basic ${hiding}` }
+        });
     if (result.ok) {
         const data = await result.json();
         itemId.value = data.id;
@@ -18,7 +24,9 @@ async function loadItem(evt) {
 
 async function deleteItem(evt) {
     evt.preventDefault();
-    const result = await fetch(evt.target.href, {method: 'DELETE'});
+    const result = await fetch(evt.target.href, {method: 'DELETE',
+                                        headers: { 'Authorization': `Basic ${hiding}` }
+                                    });
     if (result.ok) {
         loadList();
     } else {
@@ -27,7 +35,10 @@ async function deleteItem(evt) {
 }
 
 async function loadList() {
-    const result = await fetch(`${domain}rubrics`);
+    // const result = await fetch(`${domain}rubrics`);
+    const result = await fetch(`${domain}rubrics/`, {
+        headers: { 'Authorization': `Basic ${hiding}` }
+    });
 
     if(result.ok) {
         const data = await result.json();
@@ -35,8 +46,8 @@ async function loadList() {
         for (let i = 0; i < data.length; i++) {
             d = data[i];
             s += `<li>${d.name} 
-                        <a href="${domain}rubrics/${d.id}/" class="detail">Вывод</a>
-                        <a href="${domain}rubrics/${d.id}/" class="delete">Очистить</a>    
+                        <a href="${domain}rubrics/${d.id}/" class="detail">Сохранить</a>
+                        <a href="${domain}rubrics/${d.id}/" class="delete">Удалить</a>    
                     </li>`
         }
         s += '</ul>';
@@ -57,7 +68,6 @@ async function loadList() {
 }
 
 itemName.form.addEventListener('submit', async (evt) => {
-    console.log(evt);
     evt.preventDefault();
     let url, method;
     if (itemId.value){
@@ -70,7 +80,8 @@ itemName.form.addEventListener('submit', async (evt) => {
     const result = await fetch(url, {
         method: method,
         body: JSON.stringify({ name: itemName.value }),
-        headers: {'Content-Type': 'application/json'}
+        headers: {'Content-Type': 'application/json',
+                  'Authorization': `Basic ${hiding}` }
     });
     if (result.ok) {
         loadList();
