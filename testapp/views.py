@@ -3,10 +3,12 @@ import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
 
+from django.contrib.auth import authenticate, logout, login
 from django.core.mail import EmailMessage, get_connection, send_mail
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
+from flask import request
 
 from samplesite.settings import BASE_DIR
 from testapp.forms import ImgForm
@@ -161,3 +163,22 @@ def send_test_email(request):
         ['recipient@example.com'],  # получатель
     )
     return HttpResponse("Письмо отправлено успешно.")
+
+
+def auth_view(request):
+    username = request.POST('username')
+    password = request.POST('password')
+
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+    else:
+        pass
+
+    if request.user.is_authenticated:
+        pass
+    else:
+        pass
+
+def logout_view(request):
+    logout(request)

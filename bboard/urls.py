@@ -29,6 +29,8 @@ urlpatterns = [
     # path('api/bboard/', APIBboards.as_view()),
     # path('api/bboard/<int:pk>/', APIRubricDetail.as_view()),
 
+    path('api/drf-auth/', include('rest_framework.urls')),
+
     path('rubrics/', rubrics, name='rubrics'),
     path('add/', BbCreateView.as_view(), name='add'),
     # path('update/<int:pk>/', BbEditView.as_view(), name='update'),
