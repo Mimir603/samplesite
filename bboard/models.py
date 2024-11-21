@@ -221,7 +221,6 @@ class IceCream(models.Model):
     def __str__(self):
         return f"{self.name} ({self.flavor})"
 
-
 class Parent(models.Model):
     name = models.CharField(max_length=100, verbose_name="Имя родителя")
     age = models.IntegerField(verbose_name="Возраст")
