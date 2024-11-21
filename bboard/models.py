@@ -7,6 +7,8 @@ from django.db import models
 from django.http import HttpResponse
 from precise_bbcode.fields import BBCodeTextField
 
+from testapp.models import get_timestamp_path
+
 
 def is_active_default():
     return True
@@ -30,9 +32,8 @@ class MinMaxValueValidator:
                                   code='out_of_range',
                                   params={'min': self.min_value, 'max': self.max_value})
 
-
-def get_timestamp_path(instance, filename):
-    return '%s%s' % (datetime.now().timestamp(), splitext(filename)[1])
+    def get_timestamp_path(instance, filename):
+        return '%s%s' % (datetime.now().timestamp(), splitext(filename)[1])
 
 
 class Img(models.Model):
@@ -42,15 +43,6 @@ class Img(models.Model):
     class Meta:
         verbose_name = 'Изображение'
         verbose_name_plural = 'Изображение'
-
-
-class File(models.Model):
-    file = models.FileField(verbose_name="Файлы", upload_to='files/%Y/%m/%d')
-    desc = models.TextField(verbose_name='Описание')
-
-    class Meta:
-        verbose_name = 'Файлы'
-        verbose_name_plural = 'Файлы'
 
 
 class RubricQuerySet(models.QuerySet):
@@ -210,3 +202,40 @@ class Bb(models.Model):
         verbose_name_plural = 'Объявления'
         ordering = ['-published', 'title']
         get_latest_by = 'published'
+
+
+class Kiosk(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название киоска")
+    location = models.CharField(max_length=200, verbose_name="Расположение")
+
+    def __str__(self):
+        return self.name
+
+
+class IceCream(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название мороженого")
+    flavor = models.CharField(max_length=100, verbose_name="Вкус")
+    price = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Цена")
+    kiosk = models.ForeignKey(Kiosk, on_delete=models.CASCADE, related_name="ice_creams", verbose_name="Киоск")
+
+    def __str__(self):
+        return f"{self.name} ({self.flavor})"
+
+
+class Parent(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Имя родителя")
+    age = models.IntegerField(verbose_name="Возраст")
+
+    def __str__(self):
+        return self.name
+
+
+class Child(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Имя ребёнка")
+    age = models.IntegerField(verbose_name="Возраст")
+    parent = models.ForeignKey(Parent, on_delete=models.CASCADE, related_name="children", verbose_name="Родитель")
+
+    def __str__(self):
+        return self.name
+
+

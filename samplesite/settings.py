@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from tempfile import template
 
+
+import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-$_@0d@@#!x!c=udn6cj$@%+3)q!ay!#gl@_c=czm!v*%7!3i0b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['']
 
 
 # Application definition
@@ -102,23 +104,24 @@ WSGI_APPLICATION = 'samplesite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
+if DEBUG:
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "django_db",
-#         "USER": "postgres",
-#         "PASSWORD": "postgres",
-#         "HOST": "127.0.0.1",
-#         "PORT": "5432",
-#     }
-# }
+else:
+    DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "django_db",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
+        }
+    }
 
 
 # Password validation
@@ -286,44 +289,44 @@ REST_FRAMEWORK = {
 }
 
 
-LOGGING = {
-    'version': 1,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        },
-        'requre_debug_tru'
-        'e': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        },
-    },
-    'formatters': {
-        'simple': {
-            'format': '[%(asctime)s] %(levelname)s: %(message)s',
-            'datefmt': '%Y.%m/%d %H:%M:%S',
-        },
-    },
-    'handlers': {
-        'console_dev': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-            'filters': ['require_debug_true'],
-        },
-    },
-    'console_prod': {
-        'class': "logging.StreamHandler",
-        'level': 'ERROR',
-        'filters': ['require_debug_false'],
-    },
-
-    'file': {
-        'class': 'logging.handlers.RotatingFileHandler',
-        'filename': BASE_DIR / 'log/django-site.log',
-        'maxBytes': 1_048_576,
-
-        'formatter': 'simple',
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'filters': {
+#         'require_debug_false': {
+#             '()': 'django.utils.log.RequireDebugFalse',
+#         },
+#         'requre_debug_tru'
+#         'e': {
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         },
+#     },
+#     'formatters': {
+#         'simple': {
+#             'format': '[%(asctime)s] %(levelname)s: %(message)s',
+#             'datefmt': '%Y.%m/%d %H:%M:%S',
+#         },
+#     },
+#     'handlers': {
+#         'console_dev': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple',
+#             'filters': ['require_debug_true'],
+#         },
+#     },
+#     'console_prod': {
+#         'class': "logging.StreamHandler",
+#         'level': 'ERROR',
+#         'filters': ['require_debug_false'],
+#     },
+#
+#     'file': {
+#         'class': 'logging.handlers.RotatingFileHandler',
+#         'filename': BASE_DIR / 'log/django-site.log',
+#         'maxBytes': 1_048_576,
+#
+#         'formatter': 'simple',
+#     },
+# }
 
 LOGGING = {
     'version': 1,
@@ -346,29 +349,29 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
             'filters': ['require_debug_true'],
-    },
-    'console_prod': {
-        'class': 'logging.StreamHandler',
-        'formatter': 'simple',
-        'level': 'ERROR',
-        'filters': ['require_debug_false'],
-    },
-    'file': {
-        'class': 'logging.handlers.RotatingFileHandler',
-        'filename': 'd:/django-site.log',
-        'maxBytes': 1048576,
-        'backupCount': 10,
-        'formatter': 'simple',
+        },
+        'console_prod': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'log/django-site.log',
+            'maxBytes': 1_048_576,
+            'backupCount': 10,
+            'formatter': 'simple',
         },
     },
     'loggers': {
         'django': {
-        'handlers': ['console_dev', 'console_prod'],
-         },
+            'handlers': ['console_dev', 'console_prod'],
+        },
         'django.server': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': True,
         },
-    }
+    },
 }

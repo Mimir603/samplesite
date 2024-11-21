@@ -8,7 +8,7 @@ from django import forms
 
 # from captcha.fields import CaptchaField
 
-from bboard.models import Bb, Rubric, Img, File
+from bboard.models import Bb, Rubric, Img
 
 
 class ImgForm(forms.ModelForm):
@@ -24,17 +24,17 @@ class ImgForm(forms.ModelForm):
         fields = '__all__'
 
 
-class FileForm(forms.ModelForm):
-    file = forms.FileField(label='Файлы',
-                           validators=[validators.FileExtensionValidator(
-                               allowed_extensions=('docx', 'pdf', 'xlsx'))],
-                           error_messages={
-                               'invalid_extension': 'Этот формат не поддерживается'})
-    desc = forms.CharField(label='Описание', widget=forms.widgets.Textarea())
-
-    class Meta:
-        model = File
-        fields = '__all__'
+# class FileForm(forms.ModelForm):
+#     file = forms.FileField(label='Файлы',
+#                            validators=[validators.FileExtensionValidator(
+#                                allowed_extensions=('docx', 'pdf', 'xlsx'))],
+#                            error_messages={
+#                                'invalid_extension': 'Этот формат не поддерживается'})
+#     desc = forms.CharField(label='Описание', widget=forms.widgets.Textarea())
+#
+#     class Meta:
+#         model = File
+#         fields = '__all__'
 
 
 
